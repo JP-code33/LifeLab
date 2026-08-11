@@ -14,10 +14,73 @@ let generation = 0
 let population = 0
 let food = 0
 let seconds = 0
+let creatures = []
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
     drawBackground()
+}
+
+function createCreature() {
+    const creature = {
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2
+    }
+    creatures.push(creature)
+}
+
+function createPopulation() {
+    creatures = []
+    
+    for (let i = 0; i < 20; i++) {
+        createCreature()
+    }
+    population = creatures.length
+}
+
+function updateCreatures() {
+    for (const creature of creatures) {
+        creature.x += Math.cos(creature.direction) * creature.speed
+        creature.y += Math.sin(creature.direction) * creature.speed
+
+        if(
+            creature.x <= creature.size || creature.x >= canvas.width - creature.size
+        )
+
+        {creature.direction = Math.PI - creature.direction}
+
+        if(
+            creature.y <= creature.size || creature.y >= canvas.height - creature.size
+        )
+
+        {creature.direction = -creature.direction}
+
+        if (Math.random() < 0.02) {
+            creature.direction += (Math.random() - 0.5) * 0.5
+        }
+    }
+}
+
+function gameLoop() {
+    drawBackground()
+    
+    if (running) {
+        updateCreatures()
+    }
+
+    drawCreatures()
+   
+    requestAnimationFrame(gameLoop)
+}
+
+function drawCreatures() {
+    for (const creature of creatures) {
+        context.beginPath()
+
+        context.arc(creature.x, creature.y, creature.size, 0, Math.PI * 2)
+
+        context.fillStyle = "#72f59b"
+        context.fill()
+    }
 }
 
 function drawBackground() {
@@ -29,8 +92,10 @@ function drawBackground() {
         context.beginPath(); context.moveTo(x, 0); context.lineTo(x, canvas.height); context.stroke();
     }
 
-    for (let y = 0; y < canvas.height; y += gridSize)
+    for (let y = 0; y < canvas.height; y += gridSize) {
         context.beginPath(); context.moveTo(0, y); context.lineTo(canvas.width, y); context.stroke();
+    }
+        
 }
 
 function updateStats() {
@@ -41,8 +106,15 @@ function updateStats() {
 }
 
 startButton.addEventListener("click", () => {
+
+    if(creatures.length === 0) {
+        createPopulation()
+        generation = 1
+    }
+
     running = true;
     startButton.textContent = "Running..."
+    updateStats()
 })
 
 pauseButton.addEventListener("click", () => {
@@ -52,6 +124,7 @@ pauseButton.addEventListener("click", () => {
 
 resetButton.addEventListener("click", () => {
     running = false
+    creatures = []
     generation = 0
     population = 0
     food = 0
@@ -64,3 +137,4 @@ resetButton.addEventListener("click", () => {
 window.addEventListener("resize", resizeCanvas)
 resizeCanvas()
 updateStats()
+gameLoop()
