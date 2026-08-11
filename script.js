@@ -25,7 +25,8 @@ function resizeCanvas() {
 function createCreature() {
     const creature = {
         x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
-        size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, energy: 100
+        size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, energy: 100,
+        age: 0, reproductionCooldown: 0
     }
     creatures.push(creature)
 }
@@ -78,6 +79,25 @@ function checkFood() {
     }
 }
 
+function reproduceCreature() {
+    for(const creature of creatures) {
+        if(creature.energy >= 80 && creature.age >= 10 && creature.reproductionCooldown <= 0) {
+            const baby = {
+                x: creature.x + (Math.random() - 0.5) * 20,
+                y: creature.y + (Math.random() - 0.5) * 20,
+                size: creature.size, speed: creature.speed, direction: Math.random() * Math.PI * 2,
+                energy: 50, age: 0, reproductionCooldown: 10
+            }
+
+            creatures.push(baby)
+
+            creature.energy -= 40
+            creature.reproductionCooldown = 10
+        }
+    }
+    population = creatures.length
+}
+
 function removeDeadCreatures() {
     for(let i = creatures.length - 1; i >= 0; i--) {
         if(creatures[i].energy <= 0) {
@@ -121,6 +141,11 @@ function updateCreatures() {
         creature.x += Math.cos(creature.direction) * creature.speed
         creature.y += Math.sin(creature.direction) * creature.speed
         creature.energy -= 0.03
+        creature.age += 0.016
+
+        if(creature.reproductionCooldown > 0) {
+            creature.reproductionCooldown -= 0.016
+        }
 
         if(
             creature.x <= creature.size || creature.x >= canvas.width - creature.size
@@ -145,6 +170,7 @@ function gameLoop() {
         updateCreatures()
         checkFood()
         removeDeadCreatures()
+        reproduceCreature()
     }
 
     drawFood()
