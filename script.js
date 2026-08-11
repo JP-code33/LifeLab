@@ -82,6 +82,25 @@ function createPopulation() {
 
 function updateCreatures() {
     for (const creature of creatures) {
+        let closestFood = null
+        let closestDistance = Infinity
+
+        for (const item of foods) {
+            const distance = Math.hypot(creature.x - item.x, creature.y - item.y)
+
+            if(distance < closestDistance) {
+                closestDistance = distance
+                closestFood = item
+            }
+        }
+
+        if(closestFood) {
+            const dx = closestFood.x - creature.x
+            const dy = closestFood.y - creature.y
+            const angle = Math.atan2(dy, dx)
+            creature.direction = angle
+        }
+
         creature.x += Math.cos(creature.direction) * creature.speed
         creature.y += Math.sin(creature.direction) * creature.speed
 
@@ -95,10 +114,8 @@ function updateCreatures() {
             creature.y <= creature.size || creature.y >= canvas.height - creature.size
         )
 
-        {creature.direction = -creature.direction}
-
-        if (Math.random() < 0.02) {
-            creature.direction += (Math.random() - 0.5) * 0.5
+        {
+            creature.direction = -creature.direction
         }
     }
 }
