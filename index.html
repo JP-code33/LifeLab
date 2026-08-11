@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="eng">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>LifeLab</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        
+        <header class="top-bar">
+            
+            <div>
+                <h1>LifeLab</h1>
+                <p>Watch How life Adapts</p>
+            </div>
+
+        </header>
+
+        <main class="app">
+            <section class="simulationCard">
+                
+                <div class="classHeader">
+                    
+                    <div>
+                        <h2>Ecosystem</h2>
+                        <p>Observe The Organisms Evolve</p>
+                    </div>
+
+                    <div class="generation">
+                        Generation
+                        <strong id="generation">0</strong>
+                    </div>
+                </div>
+                
+                <canvas id="ecosystem"></canvas>
+
+            </section>
+
+            <section class="stat" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                
+                <div class="statCard">
+                    <span>Population</span>
+                    <strong id="Population">0</strong>
+                </div>
+
+                <div class="statCard">
+                    <span>Food</span>
+                    <strong id="food">0</strong>
+                </div>
+
+                <div class="statCard">
+                    <span>Species</span>
+                    <strong id="species">1</strong>
+                </div>
+
+                <div class="statCard">
+                    <span>Time</span>
+                    <strong id="time">0</strong>
+                </div>
+            </section>
+
+            <section class="controls">
+
+                    <button id="startButton" class="primaryButton">
+                        start Simulation
+                    </button>
+
+                    <button id="pauseButton">
+                        Pause
+                    </button>
+
+                    <button id="resetButton">
+                        Reset
+                    </button>
+                
+            </section>
+
+        </main>
+
+    </body>
+
+    <script src="script.js"></script>
+
+</html>
