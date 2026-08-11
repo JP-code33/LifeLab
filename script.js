@@ -24,7 +24,8 @@ function resizeCanvas() {
 
 function createCreature() {
     const creature = {
-        x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
+        size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, energy: 100
     }
     creatures.push(creature)
 }
@@ -40,7 +41,7 @@ function createFood() {
 function createFoodSupply() {
     foods = []
 
-    for(let i = 0; i < 40; i++) {
+    for(let i = 0; i < 60; i++) {
         createFood()
     }
 
@@ -64,11 +65,27 @@ function checkFood() {
 
             if(distance < creature.size + item.size) {
                 foods.splice(i, 1)
+                creature.energy += 40
+
+                if(creature.energy > 100) {
+                    creature.energy = 100
+                }
+
                 food = foods.length
                 break
             }
         }
     }
+}
+
+function removeDeadCreatures() {
+    for(let i = creatures.length - 1; i >= 0; i--) {
+        if(creatures[i].energy <= 0) {
+            creatures.splice(i, 1)
+        }
+    }
+
+    population = creatures.length
 }
 
 function createPopulation() {
@@ -94,7 +111,7 @@ function updateCreatures() {
             }
         }
 
-        if(closestFood) {
+        if(closestFood && closestDistance < 250) {
             const dx = closestFood.x - creature.x
             const dy = closestFood.y - creature.y
             const angle = Math.atan2(dy, dx)
@@ -103,6 +120,7 @@ function updateCreatures() {
 
         creature.x += Math.cos(creature.direction) * creature.speed
         creature.y += Math.sin(creature.direction) * creature.speed
+        creature.energy -= 0.03
 
         if(
             creature.x <= creature.size || creature.x >= canvas.width - creature.size
@@ -126,6 +144,7 @@ function gameLoop() {
     if (running) {
         updateCreatures()
         checkFood()
+        removeDeadCreatures()
     }
 
     drawFood()
