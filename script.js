@@ -15,6 +15,7 @@ let population = 0
 let food = 0
 let seconds = 0
 let creatures = []
+let foods = []
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
@@ -26,6 +27,48 @@ function createCreature() {
         x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2
     }
     creatures.push(creature)
+}
+
+function createFood() {
+    const food = {
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 4
+    }
+
+    foods.push(food)
+}
+
+function createFoodSupply() {
+    foods = []
+
+    for(let i = 0; i < 40; i++) {
+        createFood()
+    }
+
+    food = foods.length
+}
+
+function drawFood() {
+    for(const item of foods) {
+        context.beginPath()
+        context.arc(item.x, item.y, item.size, 0, Math.PI * 2)
+        context.fillStyle = "#a7f36b"
+        context.fill()
+    }
+}
+
+function checkFood() {
+    for(let i = foods.length - 1; i >= 0; i--) {
+        const item = foods[i]
+        for (const creature of creatures) {
+            const distance = Math.hypot(creature.x - item.x, creature.y - item.y)
+
+            if(distance < creature.size + item.size) {
+                foods.splice(i, 1)
+                food = foods.length
+                break
+            }
+        }
+    }
 }
 
 function createPopulation() {
@@ -65,9 +108,12 @@ function gameLoop() {
     
     if (running) {
         updateCreatures()
+        checkFood()
     }
 
+    drawFood()
     drawCreatures()
+    updateStats()
    
     requestAnimationFrame(gameLoop)
 }
@@ -109,6 +155,7 @@ startButton.addEventListener("click", () => {
 
     if(creatures.length === 0) {
         createPopulation()
+        createFoodSupply()
         generation = 1
     }
 
@@ -125,6 +172,7 @@ pauseButton.addEventListener("click", () => {
 resetButton.addEventListener("click", () => {
     running = false
     creatures = []
+    foods = []
     generation = 0
     population = 0
     food = 0
