@@ -26,7 +26,7 @@ function createCreature() {
     const creature = {
         x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
         size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, energy: 100,
-        age: 0, reproductionCooldown: 0
+        age: 0, reproductionCooldown: 0, vision: 150
     }
     creatures.push(creature)
 }
@@ -79,13 +79,17 @@ function checkFood() {
     }
 }
 
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value))
+}
+
 function reproduceCreature() {
     for(const creature of creatures) {
         if(creature.energy >= 80 && creature.age >= 10 && creature.reproductionCooldown <= 0) {
             const baby = {
                 x: creature.x + (Math.random() - 0.5) * 20,
                 y: creature.y + (Math.random() - 0.5) * 20,
-                size: creature.size, speed: creature.speed, direction: Math.random() * Math.PI * 2,
+                size: (creature.size + (Math.random() - 0.5) * 0.5, 4, 12), speed: (creature.speed + (Math.random() - 0.5) * 0.2, 0.5, 3), vision: (creature.vision + (Math.random() - 0.5) * 20, 80, 300), direction: Math.random() * Math.PI * 2,
                 energy: 50, age: 0, reproductionCooldown: 10
             }
 
@@ -131,7 +135,7 @@ function updateCreatures() {
             }
         }
 
-        if(closestFood && closestDistance < 250) {
+        if(closestFood && closestDistance < creature.vision) {
             const dx = closestFood.x - creature.x
             const dy = closestFood.y - creature.y
             const angle = Math.atan2(dy, dx)
