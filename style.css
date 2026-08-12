@@ -161,6 +161,59 @@ button:hover {
     background: #91ffb3;
 }
 
+.analyticsPanel {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    border-radius: 18px;
+    background: rgba(6, 20, 14, 0.85);
+}
+
+.analyticsHeader {
+    margin-top: 20px;
+}
+
+.analyticsHeader h2 {
+    margin: 0;
+    color: #8cffb0;
+}
+
+.analyticsHeader p {
+    margin-top: 6px;
+    color: #8ca898;
+}
+
+.analyticsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.chartCard {
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(12, 33, 23, 0.7);
+    border: 1px solid rgba(100, 255, 150, 0.08);
+}
+
+.chartCard h3 {
+    margin: 0 0 12px;
+    color: #c9fbd7;
+    font-size: 15px;
+}
+
+.chartCard canvas {
+    width: 100%;
+    height: 160px;
+    display: block;
+}
+
+@media (max-width: 700px) {
+    .analyticsGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 700px) {
     .topBar {
         padding: 20px;

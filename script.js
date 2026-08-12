@@ -8,6 +8,10 @@ const populationText = document.getElementById("population")
 const foodText = document.getElementById("food")
 const speciesText = document.getElementById("species")
 const timeText = document.getElementById("time")
+const populationChart = document.getElementById("populationChart")
+const speedChart = document.getElementById("speedChart")
+const sizeChart = document.getElementById("sizeChart")
+const visionChart = document.getElementById("visionChart")
 
 let running = false
 let generation = 0
@@ -211,6 +215,7 @@ function gameLoop() {
     drawFood()
     drawCreatures()
     updateStats()
+    updateCharts()
    
     requestAnimationFrame(gameLoop)
 }
@@ -298,6 +303,91 @@ function recordEvolutionStats() {
     averageSpeedHistory.push(stats.averageSpeed)
     averageVisionHistory.push(stats.averageVision)
     generation = stats.highestGeneration
+}
+
+function drawChart(chart, data, maxValue, label) {
+
+    const context = chart.getContext("2d")
+
+    const width =  chart.clientWidth * devicePixelRatio
+    const height = chart.clientHeight * devicePixelRatio
+
+    if(chart.width !== width || chart.height !== height) {
+        chart.width = width
+        chart.height = height
+    }
+
+    context.clearRect(0, 0, width, height)
+
+    // No data yet
+    if (data.length === 0) {
+        context.fillStyle = "#52705d"
+        context.font = `${13 * devicePixelRatio}px Arial`
+        context.fillText("Waiting for data...", 15, height / 2)
+        return
+    }
+
+    if (data.length === 1) {
+        context.fillStyle = "#52705d"
+        context.font = `${13 * devicePixelRatio}px Arial`
+        context.fillText("Collecting data...", 15, height / 2)
+        const currentValue = data[0]
+
+        if (typeof currentValue === "number") {
+            context.fillStyle = "#c9fbd7"
+            context.fillText( `${label}: ${currentValue.toFixed(2)}`, 15, 25)
+        }
+        return
+    }
+
+    const padding = 25 * devicePixelRatio
+    context.strokeStyle = "rgba(100, 255, 150, 0.12)"
+    context.lineWidth = 1 * devicePixelRatio
+
+    for (let i = 0; i <= 4; i++) {
+
+        const y = padding + (height - padding * 2) * (i / 4)
+
+        context.beginPath()
+        context.moveTo(padding, y)
+        context.lineTo(width - padding, y)
+        context.stroke()
+    }
+
+    context.beginPath()
+
+    data.forEach((value, index) => {
+
+        const x = padding + (index / (data.length - 1)) * (width - padding * 2)
+
+        const y = height - padding - (value / maxValue) * (height - padding * 2)
+
+        if (index === 0) {
+            context.moveTo(x, y)
+        } else {
+            context.lineTo(x, y)
+        }
+    })
+
+    context.strokeStyle = "#72f59b"
+    context.lineWidth = 2 * devicePixelRatio
+    context.stroke()
+
+    const currentValue = data[data.length - 1]
+
+    if (typeof currentValue === "number") {
+        context.fillStyle = "#c9fbd7"
+        context.font = `${12 * devicePixelRatio}px Arial`
+        context.fillText(
+            `${label}: ${currentValue.toFixed(2)}`, padding, padding)
+    }
+}
+
+function updateCharts() {
+    drawChart(populationChart, populationHistory, Math.max(...populationHistory, 20), "Population")
+    drawChart(speedChart, averageSpeedHistory, 3, "Speed")
+    drawChart(visionChart, averageVisionHistory, 300, "Vision")
+    drawChart(sizeChart, averageSizeHistory, 12, "Size")
 }
 
 startButton.addEventListener("click", () => {
