@@ -16,6 +16,11 @@ let food = 0
 let seconds = 0
 let creatures = []
 let foods = []
+let populationHistory = []
+let averageSpeedHistory = []
+let averageSizeHistory = []
+let averageVisionHistory = []
+let statTimer = 0
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
@@ -25,8 +30,8 @@ function resizeCanvas() {
 function createCreature() {
     const creature = {
         x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
-        size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, energy: 100,
-        age: 0, reproductionCooldown: 0, vision: 150
+        size: 7, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, vision: 150, energy: 100,
+        age: 0, reproductionCooldown: 0, generation: 1
     }
     creatures.push(creature)
 }
@@ -90,7 +95,7 @@ function reproduceCreature() {
                 x: creature.x + (Math.random() - 0.5) * 20,
                 y: creature.y + (Math.random() - 0.5) * 20,
                 size: (creature.size + (Math.random() - 0.5) * 0.5, 4, 12), speed: (creature.speed + (Math.random() - 0.5) * 0.2, 0.5, 3), vision: (creature.vision + (Math.random() - 0.5) * 20, 80, 300), direction: Math.random() * Math.PI * 2,
-                energy: 50, age: 0, reproductionCooldown: 10
+                energy: 50, age: 0, reproductionCooldown: 10, generation: creature.generation + 1
             }
 
             creatures.push(baby)
@@ -175,6 +180,11 @@ function gameLoop() {
         checkFood()
         removeDeadCreatures()
         reproduceCreature()
+        statTimer += 1
+        if(statTimer >= 60) {
+            recordEvolutionStats()
+            statTimer = 0
+        }
     }
 
     drawFood()
@@ -217,6 +227,47 @@ function updateStats() {
     timeText.textContent = `${seconds}s`
 }
 
+function calculateEvolutionStats() {
+    if(creatures.length === 0) {
+        return {
+            averageSpeed: 0,
+            averageSize: 0,
+            averageVision: 0,
+            highestGeneration: 0
+        }
+    }
+
+    let totalSpeed = 0
+    let totalSize = 0
+    let totalVision = 0
+    let highestGeneration = 0
+
+    for(const creature of creatures) {
+        totalSpeed += creature.speed
+        totalVision += creature.size
+        totalVision += creature.vision
+        if(creature.generation > highestGeneration) {
+            highestGeneration = creature.generation
+        }
+    }
+
+    return {
+        averageSpeed: totalSpeed / creatures.length,
+        averageSize: totalSize / creatures.length,
+        averageVision: totalVision / creatures.length,
+        highestGeneration: highestGeneration
+    }
+}
+
+function recordEvolutionStats() {
+    const stats = calculateEvolutionStats()
+    populationHistory.push(creatures.length)
+    averageSizeHistory.push(stats.averageSize)
+    averageSpeedHistory.push(stats.averageSpeed)
+    averageVisionHistory.push(stats.averageVision)
+    generation = stats.highestGeneration
+}
+
 startButton.addEventListener("click", () => {
 
     if(creatures.length === 0) {
@@ -239,6 +290,11 @@ resetButton.addEventListener("click", () => {
     running = false
     creatures = []
     foods = []
+    populationHistory = []
+    averageSizeHistory = []
+    averageSpeedHistory = []
+    averageVisionHistory = []
+    statTimer = 0
     generation = 0
     population = 0
     food = 0
