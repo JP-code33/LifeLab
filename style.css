@@ -183,6 +183,27 @@ button:hover {
     color: #8ca898;
 }
 
+.ecosystemStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 7px 12px;
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    border-radius: 20px;
+    background: rgba(100, 255, 150, 0.05);
+    color: #8cffb0;
+    font-size: 13px;
+}
+
+#statusIndicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #8cffb0;
+    box-shadow: 0 0 8px rgba(140, 255, 176, 0.7);
+}
+
 .analyticsGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

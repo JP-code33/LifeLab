@@ -12,6 +12,8 @@ const populationChart = document.getElementById("populationChart")
 const speedChart = document.getElementById("speedChart")
 const sizeChart = document.getElementById("sizeChart")
 const visionChart = document.getElementById("visionChart")
+const statusIndicator = document.getElementById("statusIndicator")
+const statusText = document.getElementById("statusText")
 
 let running = false
 let generation = 0
@@ -197,6 +199,32 @@ function updateCreatures() {
     }
 }
 
+function updateEcosystemStatus() {
+    if (!running && creatures.length === 0) {
+        statusText.textContent = "Ready"
+        statusIndicator.style.background = "#8cffb0"
+        return
+    }
+
+    if(creatures.length == 0) {
+        statusText.textContent = "Ecosystem Collapsed"
+        statusIndicator.style.background = "#ff6464"
+        statusIndicator.style.boxShadow = "0 0 8px rgba(255, 100, 100, 0.7)"
+        return
+    }
+
+    if(!running) {
+        statusText.textContent = "Paused"
+        statusIndicator.style.background = "#ffd166"
+        statusIndicator.style.boxShadow = "0 0 8px rgba(155, 109, 102, 0.7)"
+        return
+    }
+
+    statusText.textContent = "Ecosytem Active"
+    statusIndicator.style.background = "#8cffb0"
+    statusIndicator.style.boxShadow = "0 0 8px rgba(140, 255, 176, 0.7)"
+}
+
 function gameLoop() {
     drawBackground()
     
@@ -215,6 +243,7 @@ function gameLoop() {
     drawFood()
     drawCreatures()
     updateStats()
+    updateEcosystemStatus()
     updateCharts()
    
     requestAnimationFrame(gameLoop)
