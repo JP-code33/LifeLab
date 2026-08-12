@@ -94,7 +94,7 @@ function reproduceCreature() {
             const baby = {
                 x: creature.x + (Math.random() - 0.5) * 20,
                 y: creature.y + (Math.random() - 0.5) * 20,
-                size: (creature.size + (Math.random() - 0.5) * 0.5, 4, 12), speed: (creature.speed + (Math.random() - 0.5) * 0.2, 0.5, 3), vision: (creature.vision + (Math.random() - 0.5) * 20, 80, 300), direction: Math.random() * Math.PI * 2,
+                size: clamp(creature.size + (Math.random() - 0.5) * 0.5, 4, 12), speed: clamp(creature.speed + (Math.random() - 0.5) * 0.2, 0.5, 3), vision: clamp(creature.vision + (Math.random() - 0.5) * 20, 80, 300), direction: Math.random() * Math.PI * 2,
                 energy: 50, age: 0, reproductionCooldown: 10, generation: creature.generation + 1
             }
 
@@ -149,7 +149,8 @@ function updateCreatures() {
 
         creature.x += Math.cos(creature.direction) * creature.speed
         creature.y += Math.sin(creature.direction) * creature.speed
-        creature.energy -= 0.03
+        const energyCost = 0.015 + creature.speed * 0.012
+        creature.energy -= energyCost 
         creature.age += 0.016
 
         if(creature.reproductionCooldown > 0) {
@@ -244,7 +245,7 @@ function calculateEvolutionStats() {
 
     for(const creature of creatures) {
         totalSpeed += creature.speed
-        totalVision += creature.size
+        totalSize += creature.size
         totalVision += creature.vision
         if(creature.generation > highestGeneration) {
             highestGeneration = creature.generation
