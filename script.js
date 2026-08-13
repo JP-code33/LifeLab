@@ -69,9 +69,9 @@ function createFoodSupply() {
 }
 
 function regenerateLifeLabFood() {
-    const maximumFoodSupply = 60
+    const maximumFoodSupply = 40
     if(foods.length < maximumFoodSupply) {
-        if(Math.random() < 0.025)
+        if(Math.random() < 0.012)
             createFood()
     }
     food = foods.length
