@@ -1,3 +1,5 @@
+//All the variables that I am using to make the js work
+
 const canvas = document.getElementById("ecosystem")
 const context = canvas.getContext("2d")
 const startButton = document.getElementById("startButton")
@@ -32,6 +34,8 @@ function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
     drawBackground()
 }
+
+//basic functioning of the app like creating the creature, food and drawing it!
 
 function createCreature() {
     const creature = {
@@ -68,6 +72,8 @@ function drawFood() {
         context.fill()
     }
 }
+
+//This is where teh math kind of comes in because it is like the main for the whole system
 
 function checkFood() {
     for(let i = foods.length - 1; i >= 0; i--) {
@@ -199,6 +205,8 @@ function updateCreatures() {
     }
 }
 
+//this si where the code for the graphs comes in and all
+
 function updateEcosystemStatus() {
     if (!running && creatures.length === 0) {
         statusText.textContent = "Ready"
@@ -224,6 +232,8 @@ function updateEcosystemStatus() {
     statusIndicator.style.background = "#8cffb0"
     statusIndicator.style.boxShadow = "0 0 8px rgba(140, 255, 176, 0.7)"
 }
+
+//the main loop
 
 function gameLoop() {
     drawBackground()
@@ -270,6 +280,8 @@ function drawCreatures() {
         context.fill()
     }
 }
+
+//stuff about background, statistics and all
 
 function drawBackground() {
     context.fillStyle = "#06100c"; context.fillRect(0,  0, canvas.width, canvas.height)
@@ -324,6 +336,8 @@ function calculateEvolutionStats() {
         highestGeneration: highestGeneration
     }
 }
+
+//drawing fo the charts
 
 function recordEvolutionStats() {
     const stats = calculateEvolutionStats()
@@ -436,6 +450,8 @@ pauseButton.addEventListener("click", () => {
     running = false;
     startButton.textContent = "Start Simulation"
 })
+
+//reseting everythign and starting it over
 
 resetButton.addEventListener("click", () => {
     running = false
