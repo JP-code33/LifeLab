@@ -64,6 +64,15 @@ function createFoodSupply() {
     food = foods.length
 }
 
+function regenerateLifeLabFood() {
+    const maximumFoodSupply = 60
+    if(foods.length < maximumFoodSupply) {
+        if(Math.random() < 0.025)
+            createFood()
+    }
+    food = foods.length
+}
+
 function drawFood() {
     for(const item of foods) {
         context.beginPath()
@@ -131,12 +140,12 @@ function calculateSurvivalPressure(creature) {
 function reproduceCreature() {
     const newCreatures = []
     for (const creature of creatures) {
+        const offspringSuccessChance = clamp(0.12 + creature.survivalPressure * 0.04, 0.02, 0.25)
+        const canReproduceCreature = creature.energy >= 80 && creature.age >= 10 && creature.reproductionCooldown <= 0
 
         if (
-            creature.energy >= 80 &&
-            creature.age >= 10 &&
-            creature.reproductionCooldown <= 0
-        ) {const baby = {
+            canReproduceCreature && Math.random() < offspringSuccessChance) 
+            {const baby = {
             x: clamp(creature.x + (Math.random() - 0.5) * 20, 5, canvas.width - 5),
             y: clamp(creature.y + (Math.random() - 0.5) * 20, 5, canvas.height - 5),
             size: clamp(creature.size +(Math.random() - 0.5) * 0.8, 4, 12),
@@ -261,6 +270,7 @@ function gameLoop() {
     if (running) {
         updateCreatures()
         checkFood()
+        regenerateLifeLabFood()
         removeDeadCreatures()
         reproduceCreature()
         statTimer += 1
