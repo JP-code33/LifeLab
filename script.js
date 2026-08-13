@@ -45,7 +45,7 @@ function createCreature() {
     const creature = {
         x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
         size: 7 + Math.random() * 2, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, vision: 150 + Math.random() * 60, energy: 100,
-        age: 0, reproductionCooldown: 0, generation: 1, survivalPressure: 0
+        age: 0, reproductionCooldown: 0, generation: 1, survivalPressure: 0, survialScore: 0
     }
     creatures.push(creature)
 }
@@ -125,26 +125,35 @@ function calculateEnergyCost(creature) {
 function calculateSurvivalPressure(creature) {
     let survivalPressure = 0
 
-    if(creature.energy > 70) {
-        survivalPressure += 1
-    }
-
     if(creature.energy < 30) {
-        survivalPressure -= 1
-    }
-
-    const energyCost = calculateEnergyCost(creature)
-    if(energyCost < 0.04) {
         survivalPressure += 0.5
     }
 
-    return survivalPressure
+    if(creature.energy < 15) {
+        survivalPressure += 0.3
+    }
+
+    const energyCost = calculateEnergyCost(creature)
+    if(energyCost > 0.04) {
+        survivalPressure += 0.2
+    }
+
+    return clamp(survivalPressure, 0, 1)
+}
+
+function updateSurvivalScore(creature) {
+    let score = 0
+    score += creature.age * 0.1
+    if(creature.energy > 60) {score += 1}
+    if(creature.energy > 80) {score += 0.5}
+    score += (1 - creature.survivalPressure) * 0.5
+    creature.survivalScore = score
 }
 
 function reproduceCreature() {
     const newCreatures = []
     for (const creature of creatures) {
-        const offspringSuccessChance = clamp(0.12 + creature.survivalPressure * 0.04, 0.02, 0.25)
+        const offspringSuccessChance = clamp(0.08 + creature.survialScore * 0.1, 0.03, 0.20)
         const canReproduceCreature = creature.energy >= 80 && creature.age >= 10 && creature.reproductionCooldown <= 0
 
         if (
@@ -159,7 +168,9 @@ function reproduceCreature() {
             energy: 50,
             age: 0,
             reproductionCooldown: 10,
-            generation: creature.generation + 1
+            generation: creature.generation + 1,
+            survivalPressure: 0,
+            survialScore:0
             }
 
         newCreatures.push(baby)
@@ -217,6 +228,7 @@ function updateCreatures() {
         creature.energy -= energyCost 
         creature.survivalPressure = calculateSurvivalPressure(creature)
         creature.age += 0.016
+        updateSurvivalScore(creature)
 
         if(creature.reproductionCooldown > 0) {
             creature.reproductionCooldown -= 0.016
