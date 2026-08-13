@@ -35,13 +35,13 @@ function resizeCanvas() {
     drawBackground()
 }
 
-//basic functioning of the app like creating the creature, food and drawing it!
+//basic functioning of the app like creating the creature, food and drawing it
 
 function createCreature() {
     const creature = {
         x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
         size: 7 + Math.random() * 2, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, vision: 150 + Math.random() * 60, energy: 100,
-        age: 0, reproductionCooldown: 0, generation: 1
+        age: 0, reproductionCooldown: 0, generation: 1, survivalPressure: 0
     }
     creatures.push(creature)
 }
@@ -107,6 +107,25 @@ function calculateEnergyCost(creature) {
     cost += creature.size * 0.0025
     cost += creature.vision * 0.00004
     return cost
+}
+
+function calculateSurvivalPressure(creature) {
+    let survivalPressure = 0
+
+    if(creature.energy > 70) {
+        survivalPressure += 1
+    }
+
+    if(creature.energy < 30) {
+        survivalPressure -= 1
+    }
+
+    const energyCost = calculateEnergyCost(creature)
+    if(energyCost < 0.04) {
+        survivalPressure += 0.5
+    }
+
+    return survivalPressure
 }
 
 function reproduceCreature() {
@@ -183,6 +202,7 @@ function updateCreatures() {
         creature.y += Math.sin(creature.direction) * creature.speed
         const energyCost = calculateEnergyCost(creature)
         creature.energy -= energyCost 
+        creature.survivalPressure = calculateSurvivalPressure(creature)
         creature.age += 0.016
 
         if(creature.reproductionCooldown > 0) {
