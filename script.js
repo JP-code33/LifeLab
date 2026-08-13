@@ -16,6 +16,10 @@ const sizeChart = document.getElementById("sizeChart")
 const visionChart = document.getElementById("visionChart")
 const statusIndicator = document.getElementById("statusIndicator")
 const statusText = document.getElementById("statusText")
+const winnerSpeedText = document.getElementById("winnerSpeed")
+const winnerGenerationText = document.getElementById("winnerGeneration")
+const winnerSizeText = document.getElementById("winnerSize")
+const winnerVisionText = document.getElementById("winnerVision")
 
 let running = false
 let generation = 0
@@ -272,6 +276,7 @@ function gameLoop() {
         checkFood()
         regenerateLifeLabFood()
         removeDeadCreatures()
+        updateTraitWinners()
         reproduceCreature()
         statTimer += 1
         if(statTimer >= 60) {
@@ -365,6 +370,40 @@ function calculateEvolutionStats() {
         averageVision: totalVision / creatures.length,
         highestGeneration: highestGeneration
     }
+}
+
+function updateTraitWinners() {
+    if(creatures.length === 0){
+        winnerSpeedText.textContent = "0.00"
+        winnerSizeText.textContent = "0.00"
+        winnerVisionText.textContent = "0.00"
+        winnerGenerationText.textContent = "0"
+        return
+    }
+
+    let totalSize = 0
+    let totalSpeed = 0
+    let totalVision = 0
+    let highestGeneration = 0
+
+    for(const creature of creatures) {
+        totalSpeed += creature.speed
+        totalVision += creature.vision
+        totalSize += creature.size
+
+        if(creature.generation > highestGeneration) {
+            highestGeneration = creature.generation
+        }
+    }
+
+    const averageSize = totalSize / creatures.length
+    const averageSpeed = totalSpeed / creatures.length
+    const averageVision = totalVision / creatures.length
+
+    winnerSizeText.textContent = averageSize.toFixed(2)
+    winnerSpeedText.textContent = averageSpeed.toFixed(2)
+    winnerVisionText.textContent = averageVision.toFixed(2)
+    winnerGenerationText.textContent = highestGeneration
 }
 
 //drawing fo the charts
