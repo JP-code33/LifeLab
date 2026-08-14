@@ -21,6 +21,8 @@ const winnerGenerationText = document.getElementById("winnerGeneration")
 const winnerSizeText = document.getElementById("winnerSize")
 const winnerVisionText = document.getElementById("winnerVision")
 const generationTimelineText = document.getElementById("generationTimelineText")
+const experimentComparison = document.getElementById("experimentComparison")
+const endExperimentButton = document.getElementById("endExperimentButton")
 
 let running = false
 let foodScarcity = false
@@ -590,11 +592,12 @@ pauseButton.addEventListener("click", () => {
 
 function saveExperimentResult() {
     const stats = calculateEvolutionStats()
-    const experiment = {number: experimentNumber, population: creatures.length, generation: stats.highestGeneration, 
+    const experiment = { number:experimentHistory.length + 1, population: creatures.length, generation: stats.highestGeneration, 
         averageSpeed: stats.averageSpeed, averageVision: stats.averageVision, 
         averageSize: stats.averageSize, time: seconds}
     experimentHistory.push(experiment)
     updateExperimentHistory()
+    updateExperimentComparison()
 }
 
 function updateExperimentHistory() {
@@ -615,6 +618,37 @@ function updateExperimentHistory() {
         </div>`).join("")
 }
 
+function updateExperimentComparison() {
+    if(experimentHistory.length < 2) {
+        experimentComparison.innerHTML = "<p>Complete two experiments to compare them</p>"
+        return
+    }
+
+    const previous = experimentHistory[experimentHistory.length - 2]
+    const current = experimentHistory[experimentHistory.length - 1]
+    const visionChange = current.averageVision - previous.averageVision
+    const speedChange = current.averageSpeed - previous.averageSpeed
+    const sizeChange = current.averageSize - previous.averageSize
+    const populationChange = current.population - previous.population
+    const timeChange = current.time - previous.time
+
+    experimentComparison.innerHTML = `<h3>Experiment ${current.number} vs Experiment ${previous.number}</h3>
+        <p>Speed: ${speedChange >= 0 ? "+" : ""}${speedChange.toFixed(2)}</p>
+        <p>Size: ${sizeChange >= 0 ? "+" : ""}${sizeChange.toFixed(2)}</p>
+        <p>Vision: ${visionChange >= 0 ? "+" : ""}${visionChange.toFixed(2)}
+        <p>Population: ${populationChange >= 0 ? "+" : ""}${populationChange}</p>
+        <p>Time: ${timeChange >= 0 ? "+" : ""}${timeChange}s</p>`
+}
+
+endExperimentButton.addEventListener("click", () => {
+    if(!running || creatures.length === 0) {
+        return
+    } 
+    saveExperimentResult()
+    running = false
+    startButton.textContent = "Start Simulation"
+})
+
 //reseting everythign and starting it over
 
 resetButton.addEventListener("click", () => {
@@ -625,11 +659,13 @@ resetButton.addEventListener("click", () => {
     averageSizeHistory = []
     averageSpeedHistory = []
     averageVisionHistory = []
+    generationTimes = []
     statTimer = 0
     generation = 0
     population = 0
     food = 0
     seconds = 0
+    lastTime = 0
     startButton.textContent = "Start Simulation"
     updateStats()
     drawBackground()
