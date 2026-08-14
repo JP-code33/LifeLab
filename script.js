@@ -20,21 +20,23 @@ const winnerSpeedText = document.getElementById("winnerSpeed")
 const winnerGenerationText = document.getElementById("winnerGeneration")
 const winnerSizeText = document.getElementById("winnerSize")
 const winnerVisionText = document.getElementById("winnerVision")
+const generationTimelineText = document.getElementById("generationTimelineText")
 
 let running = false
+let foodScarcity = false
 let generation = 0
 let population = 0
 let food = 0
 let seconds = 0
 let lastTime = 0
+let statTimer = 0
 let creatures = []
 let foods = []
 let populationHistory = []
 let averageSpeedHistory = []
 let averageSizeHistory = []
 let averageVisionHistory = []
-let statTimer = 0
-let foodScarcity = false
+let generationTimes = []
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
@@ -62,6 +64,16 @@ function updateSimulationTime(timestamp) {
         lastTime = timestamp
     }
 } 
+
+function updateGenerationTimeline() {
+    if(generationTimes.length === 0) {
+        generationTimelineText.textContent = "Waiting for generations... Start the simulation!"
+        return
+    }
+    generationTimelineText.textContent = generationTimes
+    .map(entry => `Generation ${entry.generation}: ${entry.time}s`)
+    .join(" , ")
+}
 
 function createFood() {
     const food = {
@@ -332,6 +344,7 @@ function gameLoop(timestamp) {
     drawFood()
     drawCreatures()
     updateStats()
+    updateGenerationTimeline()
     updateEcosystemStatus()
     updateCharts()
    
@@ -458,7 +471,10 @@ function recordEvolutionStats() {
     averageSizeHistory.push(stats.averageSize)
     averageSpeedHistory.push(stats.averageSpeed)
     averageVisionHistory.push(stats.averageVision)
-    generation = stats.highestGeneration
+    if(stats.highestGeneration > generation) {
+        generation = stats.highestGeneration
+        generationTimes.push({generation: generation, time: seconds})
+    }
 }
 
 function drawChart(chart, data, maxValue, label) {

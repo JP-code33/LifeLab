@@ -301,6 +301,25 @@ button {
     color: #72f59b;
 }
 
+.generationTimeline {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(12, 33, 23, 0.7);
+    border: 1px, solid, rgba(100, 255, 150, 0.08);
+}
+
+.generationTimeline h3 {
+    margin-bottom: 8px;
+    color: #c9fbd7;
+    font-size: 15px;
+}
+
+.generationTimeline p {
+    color: #8ca898;
+    line-height: 1.5;
+}
+
 @media(max-width: 800px) {
     .traitGrid {
         grid-template-columns: repeat(2, 1fr);
