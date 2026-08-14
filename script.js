@@ -44,7 +44,7 @@ function resizeCanvas() {
 function createCreature() {
     const creature = {
         x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
-        size: 7 + Math.random() * 2, speed: 1 + Math.random() * 1.5, direction: Math.random() * Math.PI * 2, vision: 150 + Math.random() * 60, energy: 100,
+        size: 7 + Math.random() * 2, speed: 0.8 + Math.random() * 2.2, direction: Math.random() * Math.PI * 2, vision: 100 + Math.random() * 200, energy: 100,
         age: 0, reproductionCooldown: 0, generation: 1, survivalPressure: 0, survialScore: 0
     }
     creatures.push(creature)
@@ -96,7 +96,8 @@ function checkFood() {
 
             if(distance < creature.size + item.size) {
                 foods.splice(i, 1)
-                creature.energy += 40
+                const foodEnergy = 35 + creature.size * 1.5
+                creature.energy += foodEnergy
 
                 if(creature.energy > 100) {
                     creature.energy = 100
@@ -163,7 +164,7 @@ function reproduceCreature() {
             y: clamp(creature.y + (Math.random() - 0.5) * 20, 5, canvas.height - 5),
             size: clamp(creature.size +(Math.random() - 0.5) * 0.8, 4, 12),
             speed: clamp(creature.speed + (Math.random() - 0.5) * 0.3, 0.5, 3 ),
-            vision: clamp(creature.vision + (Math.random() - 0.5) * 25, 80, 300),
+            vision: clamp(creature.vision + (Math.random() - 0.5) * 25, 100, 300),
             direction: Math.random() * Math.PI * 2,
             energy: 50,
             age: 0,
