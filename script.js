@@ -26,6 +26,7 @@ let generation = 0
 let population = 0
 let food = 0
 let seconds = 0
+let lastTime = 0
 let creatures = []
 let foods = []
 let populationHistory = []
@@ -33,6 +34,7 @@ let averageSpeedHistory = []
 let averageSizeHistory = []
 let averageVisionHistory = []
 let statTimer = 0
+let foodScarcity = false
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
@@ -49,6 +51,17 @@ function createCreature() {
     }
     creatures.push(creature)
 }
+
+function updateSimulationTime(timestamp) {
+    if(lastTime === 0) {
+        lastTime = timestamp
+    }
+    const deltaTime = timestamp - lastTime
+    if(deltaTime >= 1000) {
+        seconds += Math.floor(deltaTime / 1000)
+        lastTime = timestamp
+    }
+} 
 
 function createFood() {
     const food = {
@@ -69,12 +82,21 @@ function createFoodSupply() {
 }
 
 function regenerateLifeLabFood() {
-    const maximumFoodSupply = 40
+    const maximumFoodSupply = foodScarcity ? 25 : 60
+    const foodRegenerationChance = foodScarcity ? 0.06 : 0.25
     if(foods.length < maximumFoodSupply) {
-        if(Math.random() < 0.012)
+        if(Math.random() < 0.025)
             createFood()
     }
     food = foods.length
+}
+
+function updateEnvironment() {
+    if(seconds >= 20 && seconds < 40) {
+        foodScarcity = true
+    } else {
+        foodScarcity = false
+    }
 }
 
 function drawFood() {
@@ -274,6 +296,13 @@ function updateEcosystemStatus() {
         return
     }
 
+    if(foodScarcity && running) {
+        statusText.textContent = "Food Scarcity"
+        statusIndicator.style.background = "#ffd166"
+        statusIndicator.style.boxShadow = "0 0 8px rgba(255, 209, 102, 0.7)"
+        return
+    }
+
     statusText.textContent = "Ecosytem Active"
     statusIndicator.style.background = "#8cffb0"
     statusIndicator.style.boxShadow = "0 0 8px rgba(140, 255, 176, 0.7)"
@@ -281,11 +310,13 @@ function updateEcosystemStatus() {
 
 //the main loop
 
-function gameLoop() {
+function gameLoop(timestamp) {
     drawBackground()
-    
+
     if (running) {
         updateCreatures()
+        updateSimulationTime(timestamp)
+        updateEnvironment()
         checkFood()
         regenerateLifeLabFood()
         removeDeadCreatures()
