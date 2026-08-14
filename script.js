@@ -30,6 +30,7 @@ let food = 0
 let seconds = 0
 let lastTime = 0
 let statTimer = 0
+let experimentNumber = 0
 let creatures = []
 let foods = []
 let populationHistory = []
@@ -37,6 +38,7 @@ let averageSpeedHistory = []
 let averageSizeHistory = []
 let averageVisionHistory = []
 let generationTimes = []
+let experimentHistory = []
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
@@ -72,7 +74,7 @@ function updateGenerationTimeline() {
     }
     generationTimelineText.textContent = generationTimes
     .map(entry => `Generation ${entry.generation}: ${entry.time}s`)
-    .join(" , ")
+    .join(", ")
 }
 
 function createFood() {
@@ -225,6 +227,12 @@ function removeDeadCreatures() {
     }
 
     population = creatures.length
+
+    if(population === 0 && running) {
+        saveExperimentResult()
+        running = false
+        startButton.textContent = "Start Simulation"
+    }
 }
 
 function createPopulation() {
@@ -579,6 +587,33 @@ pauseButton.addEventListener("click", () => {
     running = false;
     startButton.textContent = "Start Simulation"
 })
+
+function saveExperimentResult() {
+    const stats = calculateEvolutionStats()
+    const experiment = {number: experimentNumber, population: creatures.length, generation: stats.highestGeneration, 
+        averageSpeed: stats.averageSpeed, averageVision: stats.averageVision, 
+        averageSize: stats.averageSize, time: seconds}
+    experimentHistory.push(experiment)
+    updateExperimentHistory()
+}
+
+function updateExperimentHistory() {
+    if(experimentHistory.length === 0) {
+        experimentResults.innerHTML = "<p>No experiments completed yet</p>"
+        return
+    }
+
+    experimentResults.innerHTML = experimentHistory.map(experiment => `
+        <div class="experimentCard">
+            <h3>Experiment: ${experiment.number}</h3>
+            <p>Population: ${experiment.population}<p/>
+            <p>Generation: ${experiment.generation}<p/>
+            <p>Average Vision: ${experiment.averageVision.toFixed(2)}<p/>
+            <p>Average Speed: ${experiment.averageSpeed.toFixed(2)}<p/>
+            <p>Average Size: ${experiment.averageSize.toFixed(2)}<p/>
+            <p>Time: ${experiment.time}<p/>
+        </div>`).join("")
+}
 
 //reseting everythign and starting it over
 

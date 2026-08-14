@@ -320,6 +320,44 @@ button {
     line-height: 1.5;
 }
 
+.experimentPanel {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    border-radius: 18px;
+    background: rgba(6, 20, 14, 0.85);
+}
+
+.experimentResults {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.experimentCard {
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(12, 33, 23, 0.7);
+    border: 1px solid rgba(100, 255, 150, 0.08);
+}
+
+.experimentCard h3 {
+    color: #72f59b;
+    margin-bottom: 12px;
+}
+
+.experimentCard p {
+    color: #8ca898;
+    margin-top: 6px;
+}
+
+@media(max-width: 700px) {
+    .experimentResults {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media(max-width: 800px) {
     .traitGrid {
         grid-template-columns: repeat(2, 1fr);
