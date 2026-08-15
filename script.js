@@ -26,7 +26,6 @@ const endExperimentButton = document.getElementById("endExperimentButton")
 const foodAvailability = document.getElementById("foodAvailability")
 const foodRegeneration= document.getElementById("foodRegeneration")
 const startingPopulation = document.getElementById("startingPopulation")
-const environmentSize = document.getElementById("environmentSize")
 
 let running = false
 let foodScarcity = false
@@ -84,10 +83,8 @@ function updateGenerationTimeline() {
 }
 
 function createFood() {
-    const environment = getlifeLabsEnvironmentBounds()
-
     const food = {
-        x: Math.random() * environment.width, y: Math.random() * environment.height, size: 4
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 4
     }
 
     foods.push(food)
@@ -272,21 +269,6 @@ function removeDeadCreatures() {
     }
 }
 
-function getlifeLabsEnvironmentBounds() {
-    let width = canvas.width * 0.8
-    let height = canvas.height * 0.8
-
-    if(environmentSize.value === "small") {
-        width: canvas.width * 0.6; height: canvas.height * 0.6 
-    }
-
-    if(environmentSize.value === "large") {
-        width: canvas.width; height: canvas.height
-    }
-
-    return {width: width, height: height}
-}
-
 function createPopulation() {
     creatures = []
     let populationSize = Number(startingPopulation.value)
@@ -333,8 +315,8 @@ function updateCreatures() {
         }
         
         const environment = getlifeLabsEnvironmentBounds()
-        if(creature.x <= creature.size || creature.x >= environment.width - creature.size) {creature.direction = Math.PI - creature.direction}
-        if(creature.y <= creature.size || creature.y >= environment.height - creature.size) {creature.direction = -creature.direction}
+        if(creature.x <= creature.size || creature.x >= canvas.width - creature.size) {creature.direction = Math.PI - creature.direction}
+        if(creature.y <= creature.size || creature.y >= canvas.height - creature.size) {creature.direction = -creature.direction}
     }
 }
 
