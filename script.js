@@ -26,9 +26,13 @@ const endExperimentButton = document.getElementById("endExperimentButton")
 const foodAvailability = document.getElementById("foodAvailability")
 const foodRegeneration= document.getElementById("foodRegeneration")
 const startingPopulation = document.getElementById("startingPopulation")
+const inspectionContent = document.getElementById("inspectionContent")
+const inspectionPanel = document.getElementById("inspectionPanel")
+const closeInspection = document.getElementById("closeInspection")
 
 let running = false
 let foodScarcity = false
+let selectedCreature = null
 let generation = 0
 let population = 0
 let food = 0
@@ -314,10 +318,48 @@ function updateCreatures() {
             creature.reproductionCooldown -= 0.016
         }
         
-        const environment = getlifeLabsEnvironmentBounds()
         if(creature.x <= creature.size || creature.x >= canvas.width - creature.size) {creature.direction = Math.PI - creature.direction}
         if(creature.y <= creature.size || creature.y >= canvas.height - creature.size) {creature.direction = -creature.direction}
     }
+}
+
+function updateCreatureInspection() {
+    if(!selectedCreature) {
+        inspectionContent.innerHTML = "<p>No creature selected</p>"
+        return
+    }
+
+    inspectionContent.innerHTML = `
+    <div class="inspectionStat">
+        <div class="inspectionStat">
+            <span>Speed</span>
+            <strong>${selectedCreature.speed.toFixed(2)}</strong>
+        </div>
+        <div class="inspectionStat">
+            <span>Vision</span>
+            <strong>${selectedCreature.vision.toFixed(2)}</strong>
+        </div>
+        <div class="inspectionStat">
+            <span>Energy</span>
+            <strong>${selectedCreature.energy.toFixed(1)}</strong>
+        </div>
+        <div class="inspectionStat">
+            <span>Size</span
+            <strong>${selectedCreature.size.toFixed(2)}</strong>
+        </div>
+        <div class="inspectionStat">
+            <span>Generation</span
+            <strong>${selectedCreature.generation}</strong>
+        </div>
+        <div class="inspectionStat">
+            <span>Survival Score</span
+            <strong>${selectedCreature.survivalScore.toFixed(2)}</strong>
+        </div>
+        <div class="inspectionStat">
+            <span>Age</span
+            <strong>${selectedCreature.age.toFixed(2)}</strong>
+        </div>
+    </div>`
 }
 
 //this si where the code for the graphs comes in and all
@@ -381,6 +423,7 @@ function gameLoop(timestamp) {
     updateStats()
     updateGenerationTimeline()
     updateEcosystemStatus()
+    updateCreatureInspection()
     updateCharts()
    
     requestAnimationFrame(gameLoop)
@@ -405,6 +448,14 @@ function drawCreatures() {
 
         context.fillStyle = `rgb(${red}, ${green}, ${blue})`
         context.fill()
+
+        if(creature === selectedCreature) {
+            context.beginPath()
+            context.arc(creature.x, creature.y, creature.size + 6, 0, Math.PI * 2)
+            context.strokeStyle = "#ffffff"
+            context.lineWidth = 2
+            context.stroke()
+        }
     }
 }
 
@@ -674,10 +725,34 @@ endExperimentButton.addEventListener("click", () => {
     startButton.textContent = "Start Simulation"
 })
 
+canvas.addEventListener("click", (event) => {
+    const rect = canvas.getBoundingClientRect()
+    const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width)
+    const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height)
+
+    selectedCreature = null
+    for(const creature of creatures) {
+        const distance = Math.hypot(mouseX - creature.x, mouseY - creature.y)
+        if(distance <= creature.size + 25) {
+            selectedCreature = creature
+            inspectionPanel.classList.add("open")
+            break
+        }
+    }
+})
+
+closeInspection.addEventListener("click", () => {
+    selectedCreature = null
+    inspectionPanel.classList.remove("open")
+})
+
 //reseting everythign and starting it over
 
 resetButton.addEventListener("click", () => {
     running = false
+    selectedCreature = null
+    inspectionContent.innerHTML = "<p>No creature selected</p>"
+    inspectionPanel.classList.remove("open")
     creatures = []
     foods = []
     populationHistory = []
