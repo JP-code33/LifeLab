@@ -37,6 +37,52 @@
                 
                 <canvas id="ecosystem"></canvas>
 
+                <section class="environmentalPanel">
+
+                    <div class="analyticsHeader">
+                        <h2>Environment Controls</h2>
+                        <p>Change the conditions of the ecosystem to get different results</p>
+                    </div>
+
+                    <div class="environmentGrid">
+                        <div class="environmentCard">
+                            <label for="foodAvailability">Food Availability</label>
+                            <select id="foodAvailability">
+                                <option value="normal">Normal</option>
+                                <option value="scarce">Scarce</option>
+                                <option value="alot">A Lot</option>
+                            </select>
+                        </div>
+
+                        <div class="environmentCard">
+                            <label for="foodRegeneration">Food Regeneration</label>
+                            <select id="foodRegeneration">
+                                <option value="normal">Normal</option>
+                                <option value="slow">Slow</option>
+                                <option value="fast">Fast</option>
+                            </select>
+                        </div>
+
+                        <div class="environmentCard">
+                            <label for="environmentSize">Environment Size</label>
+                            <select id="environmentSize">
+                                <option value="medium">Medium</option>
+                                <option value="small">Small</option>
+                                <option value="Big">Big</option>
+                            </select>
+                        </div>
+
+                        <div class="environmentCard">
+                            <label for="startingPopulation">Starting Population</label>
+                            <input
+                                type="number"
+                                id="startingPopulation"
+                                min="10" max="50"
+                                value="20">
+                        </div>
+                    </div>
+                </section>
+
                 <section class="controls">
 
                     <button id="startButton" class="primaryButton">

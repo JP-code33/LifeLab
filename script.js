@@ -23,6 +23,10 @@ const winnerVisionText = document.getElementById("winnerVision")
 const generationTimelineText = document.getElementById("generationTimelineText")
 const experimentComparison = document.getElementById("experimentComparison")
 const endExperimentButton = document.getElementById("endExperimentButton")
+const foodAvailability = document.getElementById("foodAvailability")
+const foodRegeneration= document.getElementById("foodRegeneration")
+const startingPopulation = document.getElementById("startingPopulation")
+const environmentSize = document.getElementById("environmentSize")
 
 let running = false
 let foodScarcity = false
@@ -80,8 +84,10 @@ function updateGenerationTimeline() {
 }
 
 function createFood() {
+    const environment = getlifeLabsEnvironmentBounds()
+
     const food = {
-        x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 4
+        x: Math.random() * environment.width, y: Math.random() * environment.height, size: 4
     }
 
     foods.push(food)
@@ -89,8 +95,17 @@ function createFood() {
 
 function createFoodSupply() {
     foods = []
+    let startingFood = 50
 
-    for(let i = 0; i < 60; i++) {
+    if(foodAvailability.value === "scarce") {
+        startingFood = 20
+    }
+
+    if(foodAvailability.value === "alot") {
+        startingFood = 100
+    }
+
+    for(let i = 0; i < startingFood; i++) {
         createFood()
     }
 
@@ -98,21 +113,41 @@ function createFoodSupply() {
 }
 
 function regenerateLifeLabFood() {
-    const maximumFoodSupply = foodScarcity ? 25 : 60
-    const foodRegenerationChance = foodScarcity ? 0.06 : 0.25
-    if(foods.length < maximumFoodSupply) {
-        if(Math.random() < 0.025)
-            createFood()
+    let maximumFoodSupply = 50
+
+    if(foodAvailability.value === "scarce") {
+        maximumFoodSupply = 20
     }
+
+    if(foodAvailability.value === "alot") {
+        maximumFoodSupply = 100
+    }
+
+    let regenerationChance = 0.025
+
+    if(foodRegeneration.value === "slow") {
+        regenerationChance = 0.01
+    }
+
+    if(foodRegeneration.value === "fast") {
+        regenerationChance = 0.09
+    }
+
+    if(foods.length < maximumFoodSupply) {
+        if(Math.random() < regenerationChance) {
+            createFood()
+        }
+    }
+
     food = foods.length
 }
 
 function updateEnvironment() {
-    if(seconds >= 20 && seconds < 40) {
+    /*if(seconds >= 20 && seconds < 40) {
         foodScarcity = true
     } else {
         foodScarcity = false
-    }
+    }*/
 }
 
 function drawFood() {
@@ -237,10 +272,28 @@ function removeDeadCreatures() {
     }
 }
 
+function getlifeLabsEnvironmentBounds() {
+    let width = canvas.width * 0.8
+    let height = canvas.height * 0.8
+
+    if(environmentSize.value === "small") {
+        width: canvas.width * 0.6; height: canvas.height * 0.6 
+    }
+
+    if(environmentSize.value === "large") {
+        width: canvas.width; height: canvas.height
+    }
+
+    return {width: width, height: height}
+}
+
 function createPopulation() {
     creatures = []
+    let populationSize = Number(startingPopulation.value)
+    populationSize = Math.max(10, Math.min(50, populationSize))
+    startingPopulation.value = populationSize
     
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < populationSize; i++) {
         createCreature()
     }
     population = creatures.length
@@ -278,20 +331,10 @@ function updateCreatures() {
         if(creature.reproductionCooldown > 0) {
             creature.reproductionCooldown -= 0.016
         }
-
-        if(
-            creature.x <= creature.size || creature.x >= canvas.width - creature.size
-        )
-
-        {creature.direction = Math.PI - creature.direction}
-
-        if(
-            creature.y <= creature.size || creature.y >= canvas.height - creature.size
-        )
-
-        {
-            creature.direction = -creature.direction
-        }
+        
+        const environment = getlifeLabsEnvironmentBounds()
+        if(creature.x <= creature.size || creature.x >= environment.width - creature.size) {creature.direction = Math.PI - creature.direction}
+        if(creature.y <= creature.size || creature.y >= environment.height - creature.size) {creature.direction = -creature.direction}
     }
 }
 

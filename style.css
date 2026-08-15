@@ -352,6 +352,55 @@ button {
     margin-top: 6px;
 }
 
+.environmentPanel {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    border-radius: 18px;
+    background: rgba(6, 20, 14, 0.85);
+}
+
+.environmentGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.evironmentCard {
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(12, 33, 23, 0.7);
+    border: 1px solid rgba(100, 255, 150, 0.08);
+}
+
+.environmentCard label {
+    display: block;
+    color: #c9fbd7;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.environmentCard select {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    background: #0c2418;
+    color: #c9fbd7;
+    font-size: 14px;
+}
+
+.evironmentCard input {
+    width: 100%;
+    border-radius: 8px;
+    padding: 9px 12px;
+    background: #0c2418;
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    color: #c9fbd7;
+    font-size: 14px;
+}
+
 @media(max-width: 700px) {
     .experimentResults {
         grid-template-columns: 1fr;
