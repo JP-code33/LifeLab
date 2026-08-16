@@ -668,7 +668,9 @@ pauseButton.addEventListener("click", () => {
 
 function saveExperimentResult() {
     const stats = calculateEvolutionStats()
-    const experiment = { number:experimentHistory.length + 1, population: creatures.length, generation: stats.highestGeneration, 
+    const experiment = { 
+        number:experimentHistory.length + 1, foodAvailability: foodAvailability.value, foodRegeneration: foodRegeneration.value, startingPopulation: startingPopulation.value, 
+        population: creatures.length, generation: stats.highestGeneration, 
         averageSpeed: stats.averageSpeed, averageVision: stats.averageVision, 
         averageSize: stats.averageSize, time: seconds}
     experimentHistory.push(experiment)
@@ -685,13 +687,31 @@ function updateExperimentHistory() {
     experimentResults.innerHTML = experimentHistory.map(experiment => `
         <div class="experimentCard">
             <h3>Experiment: ${experiment.number}</h3>
-            <p>Population: ${experiment.population}<p/>
-            <p>Generation: ${experiment.generation}<p/>
-            <p>Average Vision: ${experiment.averageVision.toFixed(2)}<p/>
-            <p>Average Speed: ${experiment.averageSpeed.toFixed(2)}<p/>
-            <p>Average Size: ${experiment.averageSize.toFixed(2)}<p/>
-            <p>Time: ${experiment.time}<p/>
+
+            <div class="experimentEnvironment">
+                <h4>Environment</h4>
+                <p>Food Availabitlity: ${experiment.foodAvailability}</p>
+                <p>Food Regeneration: ${experiment.foodRegeneration}</p>
+                <p>Starting Population: ${experiment.startingPopulation}</p>
+            </div>
+            
+            <div class="experimentResults">
+                <h4>Results</h4>
+                <p>Population: ${experiment.population}</p>
+                <p>Generation: ${experiment.generation}</p>
+                <p>Average Vision: ${experiment.averageVision.toFixed(2)}</p>
+                <p>Average Speed: ${experiment.averageSpeed.toFixed(2)}</p>
+                <p>Average Size: ${experiment.averageSize.toFixed(2)}</p>
+                <p>Time: ${experiment.time}</p>
+            </div>
         </div>`).join("")
+}
+
+function calculatePercentageChangeExperiment(previous, current) {
+    if(previous === 0) {
+        return current === 0 ? 0 : 100
+    }
+    return ((current - previous) / previous) * 100
 }
 
 function updateExperimentComparison() {
@@ -707,12 +727,25 @@ function updateExperimentComparison() {
     const sizeChange = current.averageSize - previous.averageSize
     const populationChange = current.population - previous.population
     const timeChange = current.time - previous.time
+    const visionPercent = calculatePercentageChangeExperiment(previous.averageVision, current.averageVision)
+    const sizePercent = calculatePercentageChangeExperiment(previous.averageSize, current.averageSize)
+    const speedPercent = calculatePercentageChangeExperiment(previous.averageSpeed, current.averageSpeed)
+    const populationPercent = calculatePercentageChangeExperiment(previous.population, current.population)
 
-    experimentComparison.innerHTML = `<h3>Experiment ${current.number} vs Experiment ${previous.number}</h3>
-        <p>Speed: ${speedChange >= 0 ? "+" : ""}${speedChange.toFixed(2)}</p>
-        <p>Size: ${sizeChange >= 0 ? "+" : ""}${sizeChange.toFixed(2)}</p>
-        <p>Vision: ${visionChange >= 0 ? "+" : ""}${visionChange.toFixed(2)}
-        <p>Population: ${populationChange >= 0 ? "+" : ""}${populationChange}</p>
+    experimentComparison.innerHTML = `
+    <h3>Experiment ${current.number} vs Experiment ${previous.number}</h3>
+    <div class="comparisonEnvironment">
+        <h4>Environment</h4>
+        <p>Food Availability: ${previous.foodAvailability}→${current.foodAvailability}</p>
+        <p>Food Regeneration: ${previous.foodRegeneration}→${current.foodRegeneration}</p>
+        <p> Starting Population: ${previous.startingPopulation}→${current.startingPopulation}</p>
+    </div>
+    <div class="comparisonResult">
+        <h4>Changes</h4>
+        <p>Speed: ${speedChange >= 0 ? "+" : ""}${speedChange.toFixed(2)}(${speedPercent >= 0 ? "+" : ""}${speedPercent.toFixed(1)}%)</p>
+        <p>Size: ${sizeChange >= 0 ? "+" : ""}${sizeChange.toFixed(2)}(${sizePercent >= 0 ? "+" : ""}${sizePercent.toFixed(1)}%)</p>
+        <p>Vision: ${visionChange >= 0 ? "+" : ""}${visionChange.toFixed(2)}(${visionPercent >= 0 ? "+" : ""}${visionPercent.toFixed(1)}%)</p>
+        <p>Population: ${populationChange >= 0 ? "+" : ""}${populationChange}(${populationPercent >= 0 ? "+" : ""}${populationPercent.toFixed(1)}%)</p>
         <p>Time: ${timeChange >= 0 ? "+" : ""}${timeChange}s</p>`
 }
 
