@@ -187,8 +187,29 @@
                     <div id="experimentResults" class="experimentResults">
                         <p>No experiments completed yet</p>
                     </div>
-                    <div id="experimentComparison" class="experimentComparison">
-                        <p>Complete two experiments to compare them</p>
+                    <div class="experimentComparison">
+                        <h2>Complete Experiments</h2>
+                        <div class="comparisonControls">
+                            <label>Experiment 
+                                <select id="experimentSelectA">
+                                    <option value="">Select Experiment</option>
+                                </select>
+                            </label>
+                            
+                            <span>vs</span>
+                            
+                            <label> Experiment
+                                <select id="experimentSelectB">
+                                    <option value="">Select experiment</option>
+                                </select>
+                            </label>
+
+                            <button id="compareExperimentsButton">Compare</button>
+                        </div>
+
+                        <div id="experimentComparison">
+                            <p>Select two experiments to comapre them</p>
+                        </div>
                     </div>
                 </section>
 

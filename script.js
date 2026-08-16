@@ -29,6 +29,9 @@ const startingPopulation = document.getElementById("startingPopulation")
 const inspectionContent = document.getElementById("inspectionContent")
 const inspectionPanel = document.getElementById("inspectionPanel")
 const closeInspection = document.getElementById("closeInspection")
+const experimentSelectA = document.getElementById("experimentSelectA")
+const experimentSelectB = document.getElementById("experimentSelectB")
+const compareExperimentsButton = document.getElementById("compareExperimentsButton")
 
 let running = false
 let foodScarcity = false
@@ -675,7 +678,7 @@ function saveExperimentResult() {
         averageSize: stats.averageSize, time: seconds}
     experimentHistory.push(experiment)
     updateExperimentHistory()
-    updateExperimentComparison()
+    updateExperimentSelectors()
 }
 
 function updateExperimentHistory() {
@@ -714,31 +717,72 @@ function calculatePercentageChangeExperiment(previous, current) {
     return ((current - previous) / previous) * 100
 }
 
+function updateExperimentSelectors() {
+    const currentA = experimentSelectA.value
+    const currentB = experimentSelectB.value
+    const options = experimentHistory.map(experiment => `
+        <option value="${experiment.number}">
+            Experiment ${experiment.number}
+        </option>`).join("")
+
+    experimentSelectA.innerHTML = `
+    <option value="">Select experiment</option> ${options}`
+
+    experimentSelectB.innerHTML = `
+    <option value="">Select experiment</option> ${options}`
+
+    if(experimentHistory.some(experiment => String(experiment.number) === currentA)) {
+        experimentSelectA.value = currentA
+    }
+
+    if(experimentHistory.some(experiment => String(experiment.number) === currentB)) {
+        experimentSelectB.value = currentB
+    }
+}
+
 function updateExperimentComparison() {
     if(experimentHistory.length < 2) {
         experimentComparison.innerHTML = "<p>Complete two experiments to compare them</p>"
         return
     }
 
-    const previous = experimentHistory[experimentHistory.length - 2]
-    const current = experimentHistory[experimentHistory.length - 1]
-    const visionChange = current.averageVision - previous.averageVision
-    const speedChange = current.averageSpeed - previous.averageSpeed
-    const sizeChange = current.averageSize - previous.averageSize
-    const populationChange = current.population - previous.population
-    const timeChange = current.time - previous.time
-    const visionPercent = calculatePercentageChangeExperiment(previous.averageVision, current.averageVision)
-    const sizePercent = calculatePercentageChangeExperiment(previous.averageSize, current.averageSize)
-    const speedPercent = calculatePercentageChangeExperiment(previous.averageSpeed, current.averageSpeed)
-    const populationPercent = calculatePercentageChangeExperiment(previous.population, current.population)
+    const experimentA = Number(experimentSelectA.value)
+    const experimentB = Number(experimentSelectB.value)
+
+    if(!experimentA || !experimentB) {
+        experimentComparison.innerHTML = "<p>Select two experiments to compare them</p>"
+        return
+    }
+
+    if(experimentA === experimentB) {
+        experimentComparison.innerHTML = "<p>Please select two different experiments</p>"
+        return
+    }
+
+    const firstExperiment = experimentHistory.find(experiment => experiment.number === experimentA)
+    const secondExperiment = experimentHistory.find(experiment => experiment.number === experimentB)
+
+    if(!firstExperiment || !secondExperiment) {
+        return
+    }
+
+    const visionChange = secondExperiment.averageVision - firstExperiment.averageVision
+    const speedChange = secondExperiment.averageSpeed - firstExperiment.averageSpeed
+    const sizeChange = secondExperiment.averageSize - firstExperiment.averageSize
+    const populationChange = secondExperiment.population - firstExperiment.population
+    const timeChange = secondExperiment.time - firstExperiment.time
+    const visionPercent = calculatePercentageChangeExperiment(firstExperiment.averageVision, secondExperiment.averageVision)
+    const sizePercent = calculatePercentageChangeExperiment(firstExperiment.averageSize, secondExperiment.averageSize)
+    const speedPercent = calculatePercentageChangeExperiment(firstExperiment.averageSpeed, secondExperiment.averageSpeed)
+    const populationPercent = calculatePercentageChangeExperiment(firstExperiment.population, secondExperiment.population)
 
     experimentComparison.innerHTML = `
-    <h3>Experiment ${current.number} vs Experiment ${previous.number}</h3>
+    <h3>Experiment ${secondExperiment.number} vs Experiment ${firstExperiment.number}</h3>
     <div class="comparisonEnvironment">
         <h4>Environment</h4>
-        <p>Food Availability: ${previous.foodAvailability}→${current.foodAvailability}</p>
-        <p>Food Regeneration: ${previous.foodRegeneration}→${current.foodRegeneration}</p>
-        <p> Starting Population: ${previous.startingPopulation}→${current.startingPopulation}</p>
+        <p>Food Availability: ${firstExperiment.foodAvailability}→${secondExperiment.foodAvailability}</p>
+        <p>Food Regeneration: ${firstExperiment.foodRegeneration}→${secondExperiment.foodRegeneration}</p>
+        <p> Starting Population: ${firstExperiment.startingPopulation}→${secondExperiment.startingPopulation}</p>
     </div>
     <div class="comparisonResult">
         <h4>Changes</h4>
@@ -777,6 +821,10 @@ canvas.addEventListener("click", (event) => {
 closeInspection.addEventListener("click", () => {
     selectedCreature = null
     inspectionPanel.classList.remove("open")
+})
+
+compareExperimentsButton.addEventListener("click", () => {
+    updateExperimentComparison()
 })
 
 //reseting everythign and starting it over
