@@ -32,6 +32,9 @@ const closeInspection = document.getElementById("closeInspection")
 const experimentSelectA = document.getElementById("experimentSelectA")
 const experimentSelectB = document.getElementById("experimentSelectB")
 const compareExperimentsButton = document.getElementById("compareExperimentsButton")
+const analystChat = document.getElementById("analystChat")
+const analystInput = document.getElementById("analystInput")
+const analystSendButton = document.getElementById("analystSendButton")
 
 let running = false
 let foodScarcity = false
@@ -793,6 +796,112 @@ function updateExperimentComparison() {
         <p>Time: ${timeChange >= 0 ? "+" : ""}${timeChange}s</p>`
 }
 
+function addAnalystMessage(message, type) {
+    const messageElement = document.createElement("div")
+    messageElement.classname = type === "user" ? "analystMessage userMessage" : "analystMessage"
+
+    if(type === "user") {
+        messageElement.innerHTML = `
+        <strong>You</strong>
+        <p>${message}</p>`
+    } else {
+        messageElement.innerHTML = `
+        <strong>LifeLab's Evolution Analyst</strong>
+        <p>${message}</p>`
+    }
+
+    analystChat.appendChild(messageElement)
+    analystChat.scrollTop = analystChat.scrollHeight
+}
+
+function analyzeLifeLabExperiments(question) {
+    if(experimentHistory.length === 0) {
+        return "You haven't completed any experiments yet. Run some experiments and then come back to analyze!"
+    }
+    const latestExperiment = experimentHistory[experimentHistory.length - 1]
+    const lowerQuestion = question.toLowerCase()
+    if(lowerQuestion.includes("population")) {
+        let highestPopulation = experimentHistory[0]
+        for(const experiment of experimentHistory) {
+            if(experiment.population > highestPopulation.population) {
+                highestPopulation = experiment
+            }
+        }
+        return `
+        Your highest population was in Experiment ${highestPopulation.number}, with ${highestPopulation.population} organsims.
+        That experiment used ${highestPopulation.foodAvailability} food availability and ${highestPopulation.foodRegeneration} food regenration
+        A larger available food supply or faster regeneration can provide organisms with more energy for survival and reproduction`
+    }
+
+    if(lowerQuestion.includes("speed")) {
+        let fastestExperiment = experimentHistory[0]
+        for(const experiment of experimentHistory) {
+            if(experiment.averageSpeed > fastestExperiment.averageSpeed) {
+                fastestExperiment = experiment
+            }
+        }
+        return `
+        Experiment ${fastestExperiment.number} has the highest average speed, at ${fastestExperiment.averageSpeed.toFixed(2)}.
+        Higher speed can help organisms reach food more quickly, but it also increases their energy cost. 
+        That means faster organisms may only be advantageous when teh extra energy expenditure is worth the benefit.`
+    }
+
+    if(lowerQuestion.includes("vison")) {
+        let highesVisionExperiment = experimentHistory[0]
+        for(const experiment of experimentHistory) {
+            if(experiment.averageVision > highesVisionExperiment.averageVision) {
+                highesVisionExperiment = experiment
+            }
+        }
+        return `
+        Experiment ${highesVisionExperiment.number} had the highest average vision at ${highesVisionExperiment.averageVision.toFixed(2)}.
+        Vision can help organisms detect food from farther away, but your simulation also gives organisms an energy cost based on their vision. 
+        This creates a trade-off between finding resources and conserving energy.`
+    }
+
+    if(lowerQuestion.includes("size")) {
+        let largestExperiment = experimentHistory[0]
+        for(const experiment of experimentHistory) {
+            if(experiment.averageSize > largestExperiment.averageSize) {
+                largestExperiment = experiment
+            }
+        }
+        return `
+        Experiment ${largestExperiment.number} produced the largest average organism size at ${largestExperiment.averageSize.toFixed(2)}.
+        Larger organisms can have different survival advantages, but size also contributes to energy consumption in your simulation.`
+    }
+
+    if(lowerQuestion.includes("best") || lowerQuestion.includes("successful")) {
+        let bestExperiment = experimentHistory[0]
+        for(const experiment of experimentHistory) {
+            if(experiment.generation > bestExperiment.generation) {
+                bestExperiment = experiment
+            }
+        }
+        return `
+        Based on your generation count, Experiment ${bestExperiment.number} was your strongest experiment.
+        It reached Generation ${bestExperiment.generation} and finished with ${bestExperiment.population} organisms.
+        This doesn't necessarily mean it was objectively the "best" ecosystem. It means it produced the deepest evolution according to the data currently recorded.`
+    }
+
+    if(lowerQuestion.includes("latest") || lowerQuestion.includes("last")) {
+        return `
+        Your latest experiment was Experiment ${latestExperiment.number}.
+        It finished with ${latestExperiment.population} organisms, reached Generation ${latestExperiment.generation}, had an average speed of ${latestExperiment.averageSpeed.toFixed(2)},
+        average vision of ${latestExperiment.averageVision.toFixed(2)}, and average size of ${latestExperiment.averageSize.toFixed(2)}.
+        The environment used ${latestExperiment.foodAvailability} food availability and ${latestExperiment.foodRegeneration} regeneration`
+    }
+
+    return `
+    I can analyze your experiment data, including population, speed, vision, size, generations, food availability, and food regenration.
+    Try asking: 
+    "Which experiment had the highest population?"
+    "Why did speed increase?"
+    "Which experiment had the highest vision?"
+    "What was my best experiment?"
+    `
+}
+
 endExperimentButton.addEventListener("click", () => {
     if(!running || creatures.length === 0) {
         return
@@ -825,6 +934,25 @@ closeInspection.addEventListener("click", () => {
 
 compareExperimentsButton.addEventListener("click", () => {
     updateExperimentComparison()
+})
+
+analystSendButton.addEventListener("click", () => {
+    const question = analystInput.value.trim()
+    if(question === "") {
+        return
+    }
+    addAnalystMessage(question, "user")
+    const response = analyzeLifeLabExperiments(question)
+    setTimeout(() => {
+        addAnalystMessage(response, "analyst")
+    }, 300)
+    analystInput.value = ""
+})
+
+analystInput.addEventListener("keydown", (event) => {
+    if(event.key === "Enter") {
+        analystSendButton.click()
+    }
 })
 
 //reseting everythign and starting it over

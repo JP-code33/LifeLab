@@ -468,6 +468,82 @@ button {
     color: #c9fbd7;
 }
 
+.analystPanel {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid rgba(140, 255, 176, 0.12);
+    border-radius: 16px;
+    background: rgba(6, 16, 12, 0.8);
+}
+
+.analystChat {
+    height: 300px;
+    overflow: auto;
+    padding: 16px;
+    margin-top: 18px;
+    border-radius: 12px;
+    background: #040b08;
+    border: 1px solid rgba(140, 255, 176, 0.08);
+}
+
+.analystMessage {
+    max-width: 80%;
+    margin-bottom: 14px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    background: rgba(140, 255, 176, 0.08);
+}
+
+.analystMessage strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #8cffb0;
+}
+
+.analystMessage p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.userMessage {
+    margin-left: auto;
+    background: rgba(100, 150, 255, 0.12);
+}
+
+.userMessage strong {
+    color: #9cc4ff;
+}
+
+.analystInputArea {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.analystInputArea input {
+    flex: 1;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid rgba(140, 255, 176, 0.12);
+    background: #040b08;
+    color: white;
+    outline: none;
+}
+
+.analystInputArea input:focus {
+    border-color: rgba(140, 255, 176, 0.4);
+}
+
+.analystInputArea button {
+    padding: 0 22px;
+    border: none;
+    border-radius: 10px;
+    background: #8cffb0;
+    color: #06100c;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 @media(max-width: 700px) {
     .experimentResults {
         grid-template-columns: 1fr;
