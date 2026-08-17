@@ -64,7 +64,7 @@ function resizeCanvas() {
 
 function createCreature() {
     const creature = {
-        x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
+        name: "Unnamed", x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
         size: 7 + Math.random() * 2, speed: 0.8 + Math.random() * 2.2, direction: Math.random() * Math.PI * 2, vision: 100 + Math.random() * 200, energy: 100,
         age: 0, reproductionCooldown: 0, generation: 1, survivalPressure: 0, survialScore: 0
     }
@@ -240,6 +240,7 @@ function reproduceCreature() {
         if (
             canReproduceCreature && Math.random() < offspringSuccessChance) 
             {const baby = {
+            name: "Unnamed",
             x: clamp(creature.x + (Math.random() - 0.5) * 20, 5, canvas.width - 5),
             y: clamp(creature.y + (Math.random() - 0.5) * 20, 5, canvas.height - 5),
             size: clamp(creature.size +(Math.random() - 0.5) * 0.8, 4, 12),
@@ -336,6 +337,17 @@ function updateCreatureInspection() {
     }
 
     inspectionContent.innerHTML = `
+    <div class="inspectionName">
+        <label for="creatureNameInput">Creature Name</label>
+        <input 
+            type="text"
+            id="creatureNameInput" 
+            value="${selectedCreature.name}"
+            maxlength="20"
+            placeholder="Enter a name"
+        >
+        <button id="saveCreatureName">Save Name</button>
+    </div>
     <div class="inspectionStat">
         <div class="inspectionStat">
             <span>Speed</span>
@@ -429,7 +441,6 @@ function gameLoop(timestamp) {
     updateStats()
     updateGenerationTimeline()
     updateEcosystemStatus()
-    updateCreatureInspection()
     updateCharts()
    
     requestAnimationFrame(gameLoop)
@@ -454,6 +465,13 @@ function drawCreatures() {
 
         context.fillStyle = `rgb(${red}, ${green}, ${blue})`
         context.fill()
+
+        if(creature.name !== "Unamed") {
+            context.fillStyle = "#ffffff"
+            context.font = "12px Arial"
+            context.textAlign = "center"
+            context.fillText(creature.name, creature.x, creature.y - creature.size - 8)
+        }
 
         if(creature === selectedCreature) {
             context.beginPath()
@@ -911,6 +929,17 @@ endExperimentButton.addEventListener("click", () => {
     startButton.textContent = "Start Simulation"
 })
 
+inspectionContent.addEventListener("click", (event) => {
+    if(event.target.id === "saveCreatureName") {
+        const input = document.getElementById("creatureNameInput")
+        if(selectedCreature && input) {
+            const newName = input.value.trim()
+            selectedCreature.name = newName || "Unnamed"
+            updateCreatureInspection()
+        }
+    }
+})
+
 canvas.addEventListener("click", (event) => {
     const rect = canvas.getBoundingClientRect()
     const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width)
@@ -919,9 +948,10 @@ canvas.addEventListener("click", (event) => {
     selectedCreature = null
     for(const creature of creatures) {
         const distance = Math.hypot(mouseX - creature.x, mouseY - creature.y)
-        if(distance <= creature.size + 25) {
+        if(distance <= creature.size + 40) {
             selectedCreature = creature
             inspectionPanel.classList.add("open")
+            updateCreatureInspection()
             break
         }
     }
