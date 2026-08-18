@@ -15,18 +15,55 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 40px;
+    padding: 18px 40px;
     border-bottom: 1px solid #19352a;
-    background: #091812;
+    background: #06100c;
+    position: sticky;
+    top: 0;
+    z-index: 0;
 }
 
-.brandTag {
-    display: block;
-    margin-bottom: 6px;
-    color: #72f59b;
-    font-size: 11px;
+.brandLink {
+    color: #f2fff6;
+    text-decoration: none;
+    font-size: 28px;
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: -1px;
+}
+
+.mainNav {
+    display: flex;
+    align-items: center;
+    gap: 42px;
+}
+
+.mainNav a {
+    position: relative;
+    padding: 10px 0;
+    color: #7d8581;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.mainNav a:hover {
+    color: #f2fff6;
+}
+
+.mainNav a.active {
+    color: #f2fff6;
+}
+
+.mainNav a.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -19px;
+    height: 3px;
+    background: #72f59b;
+    border-radius: 3px 3px 0 0;
 }
 
 .topBar h1 {
@@ -533,6 +570,121 @@ button {
 .aiInputArea button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.guidePage {
+    width: min(1000px, 90%);
+    margin: 50px auto;
+}
+
+.guideHero {
+    padding: 70px 40px;
+    background: #0b1b14;
+    border: 1px solid #19382a;
+    text-align: center;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.guideHero h2 {
+    margin-top: 10px;
+    font-size: 44px;
+    color: #f2fff6;
+}
+
+.guideHero p {
+    max-width: 650px;
+    margin: 15px auto 25px;
+    color: #8ca898;
+    line-height: 1.6;
+}
+
+.sectionTag {
+    color: #72f59b;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.guideButton {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 9px;
+    background: rgba(100, 255, 150, 0.12);
+    border: 1px solid rgba(100, 255, 150, 0.3);
+    color: #8cffb0;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.guideButton:hover {
+    background: rgba(100, 255, 150, 0.2);
+    transform: translateY(-2px)
+}
+
+.guideSection {
+    margin-top: 24px;
+    padding: 28px;
+    background: rgba(6, 20, 14, 0.85);
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    border-radius: 18px;
+}
+
+.guideSection h2 {
+    margin-top: 8px;
+    color: #f2fff6;
+    font-size: 24px;
+}
+
+.guideSection p {
+    margin-top: 12px;
+    max-width: 800px;
+    color: #8ca898;
+    line-height: 1.7;
+}
+
+.aboutPage {
+    width: min(1000, 90%);
+    margin: 50px auto;
+}
+
+.aboutHero {
+    padding: 50px 40px;
+    background: #0b1b14;
+    border: 1px solid #19383a;
+    border-radius: 18px;
+}
+
+.aboutHero h2 {
+    margin-top: 8px;
+    font-size: 38px;
+    color: #f2fff6;
+}
+
+.aboutHero p {
+    margin-top: 14px;
+    color: #8ca898;
+    line-height: 1.7;
+    max-width: 750px;
+}
+
+.aboutSection {
+    margin-top: 24px;
+    padding: 28px;
+    background: rgba(6, 20, 14, 0.85);
+    border: 1px solid rgba(100, 255, 150, 0.15);
+    border-radius: 18px;
+}
+
+.aboutSection h2 {
+    color: #8cffb0;
+    margin-bottom: 10px;
+}
+
+.aboutSection p {
+    color: #8ca898;
+    line-height: 1.7;
 }
 
 @media(max-width: 700px) {
