@@ -31,7 +31,7 @@ exports.handler = async function(event) {
                 {
                     role: "user",
                     content: prompt
-                }], temperature: 0.3, max_tokens: 900
+                }], temperature: 0.3, max_tokens: 1400
             })
         })
         if(!response.ok) {
