@@ -214,23 +214,27 @@
                 </section>
 
 
-                <section class="analystPanel">
-
+                <section class="aiAnalystPanel">
                     <div class="analyticsHeader">
-                        <h2>LifeLab's Evolution Analyst</h2>
-                        <p>Ask questions about what happened in your experiments</p>
+                        <h2>LifeLab Analyst</h2>
+                        <p>Ask questions about your experiments and get detailed explanations</p>
                     </div>
 
-                    <div class="analystChat" id="analystChat">
-                        <div class="analystMessage">
-                            <strong>LifeLab's Evolution Analyst</strong>
-                            <p>Complete an experiment, then ask me about your results</p>
+                    <div id="aiMessages" class="aiMessages">
+                        <div class="aiMessage">
+                            <strong>LifeLab Analyst</strong>
+                            <p>Run an experiment and ask me questions related to the experiments</p>
                         </div>
                     </div>
-
-                    <div class="analystInputArea">
-                        <input type="text" id="analystInput" placeholder="Ask something about your experiments...">
-                        <button id="analystSendButton">Ask</button>
+                    
+                    <div class="aiInputArea">
+                        <input
+                            type="text"
+                            id="aiQuestion"
+                            placeholder="Ask something about your experiments...">
+                        <button id="askAiButton">
+                            Analyze
+                        </button>
                     </div>
                 </section>
 
@@ -264,6 +268,7 @@
 
     </body>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked.min.js"></script>
     <script src="script.js"></script>
 
 </html>
