@@ -35,6 +35,7 @@ const compareExperimentsButton = document.getElementById("compareExperimentsButt
 const aiMessages = document.getElementById("aiMessages")
 const aiQuestion = document.getElementById("aiQuestion")
 const askAiButton = document.getElementById("askAiButton")
+const experimentResults = document.getElementById("experimentResults")
 
 let running = false
 let foodScarcity = false
@@ -53,7 +54,7 @@ let averageSpeedHistory = []
 let averageSizeHistory = []
 let averageVisionHistory = []
 let generationTimes = []
-let experimentHistory = []
+let experimentHistory = JSON.parse(localStorage.getItem("lifelabExperiments")) || []
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight
@@ -66,7 +67,7 @@ function createCreature() {
     const creature = {
         name: "Unnamed", x: Math.random() * canvas.width, y: Math.random() * canvas.height, 
         size: 7 + Math.random() * 2, speed: 0.8 + Math.random() * 2.2, direction: Math.random() * Math.PI * 2, vision: 100 + Math.random() * 200, energy: 100,
-        age: 0, reproductionCooldown: 0, generation: 1, survivalPressure: 0, survialScore: 0
+        age: 0, reproductionCooldown: 0, generation: 1, survivalPressure: 0, survivalScore: 0
     }
     creatures.push(creature)
 }
@@ -234,7 +235,7 @@ function updateSurvivalScore(creature) {
 function reproduceCreature() {
     const newCreatures = []
     for (const creature of creatures) {
-        const offspringSuccessChance = clamp(0.08 + creature.survialScore * 0.1, 0.03, 0.20)
+        const offspringSuccessChance = clamp(0.08 + creature.survivalScore * 0.1, 0.03, 0.20)
         const canReproduceCreature = creature.energy >= 80 && creature.age >= 10 && creature.reproductionCooldown <= 0
 
         if (
@@ -466,7 +467,7 @@ function drawCreatures() {
         context.fillStyle = `rgb(${red}, ${green}, ${blue})`
         context.fill()
 
-        if(creature.name !== "Unamed") {
+        if(creature.name !== "Unnamed") {
             context.fillStyle = "#ffffff"
             context.font = "12px Arial"
             context.textAlign = "center"
@@ -698,6 +699,7 @@ function saveExperimentResult() {
         averageSpeed: stats.averageSpeed, averageVision: stats.averageVision, 
         averageSize: stats.averageSize, time: seconds}
     experimentHistory.push(experiment)
+    localStorage.setItem("lifelabExperiments", JSON.stringify(experimentHistory))
     updateExperimentHistory()
     updateExperimentSelectors()
 }
@@ -884,7 +886,7 @@ async function askLifeLabAI() {
             throw new Error(data.error || "AI request failed")
         }
 
-        loadingMessage.querySelector("p").textContent = data.answer
+        loadingMessage.querySelector("p").innerHTML = marked.parse(data.answer)
 
     } catch (error) {
         console.error("Analyst error:", error)
@@ -980,4 +982,6 @@ resetButton.addEventListener("click", () => {
 window.addEventListener("resize", resizeCanvas)
 resizeCanvas()
 updateStats()
+updateExperimentHistory()
+updateExperimentSelectors()
 gameLoop()
